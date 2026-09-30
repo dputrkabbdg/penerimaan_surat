@@ -44,7 +44,7 @@
       .date-display { background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.875rem; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 0.5rem; }
       .btn-logout { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); }
       .btn-logout:hover { background: rgba(255,255,255,0.3); }
-      .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+      .container { max-width: 1600px; margin: 0 auto; padding: 2rem; }
       .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
       .stat-card { background: var(--white); border-radius: 12px; padding: 1.5rem; box-shadow: var(--shadow); border-left: 4px solid var(--primary-color); transition: transform 0.3s ease, box-shadow 0.3s ease; }
       .stat-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
@@ -66,7 +66,7 @@
       .filter-select { padding: 0.75rem 2.5rem 0.75rem 1rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 0.875rem; background: var(--white); cursor: pointer; font-family: inherit; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236c757d' d='M6 9L1 4h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; appearance: none; }
       .filter-select.active-filter { border-color: var(--danger-color); background-color: #fff5f5; }
       .table-container { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border-color); }
-      table { width: 100%; border-collapse: collapse; font-size: 0.875rem; min-width: 1400px; }
+      table { width: 100%; border-collapse: collapse; font-size: 0.875rem; min-width: 1600px; } /* Diperlebar untuk 14 kolom */
       thead { background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); color: var(--white); }
       th { padding: 1rem; text-align: left; font-weight: 600; white-space: nowrap; }
       td { padding: 1rem; border-bottom: 1px solid var(--border-color); vertical-align: top; }
@@ -82,7 +82,7 @@
       @keyframes spin { to { transform: rotate(360deg); } }
       .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
       .modal.active { display: flex; }
-      .modal-content { background: var(--white); padding: 2rem; border-radius: 12px; width: 90%; max-width: 700px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); }
+      .modal-content { background: var(--white); padding: 2rem; border-radius: 12px; width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); }
       .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
       .modal-header h3 { color: var(--primary-color); }
       .close-modal { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light); }
@@ -102,7 +102,7 @@
       .success-message.active { display: block; }
       .info-message { background: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; padding: 1rem; border-radius: 8px; margin: 1rem 0; display: none; }
       .info-message.active { display: block; }
-      .keterangan-cell, .dokumentasi-cell { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .keterangan-cell, .dokumentasi-cell { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       @media (max-width: 768px) {
         .header-content { flex-direction: column; gap: 1rem; text-align: center; }
         .container { padding: 1rem; }
@@ -173,18 +173,20 @@
               <thead>
                 <tr>
                   <th style="width: 3%;">NO</th>
-                  <th style="width: 9%;">NOMOR SURAT</th>
+                  <th style="width: 8%;">NOMOR SURAT</th>
                   <th style="width: 7%;">TGL SURAT</th>
                   <th style="width: 9%;">ASAL SURAT</th>
                   <th style="width: 7%;">TGL PENERIMAAN</th>
-                  <th style="width: 15%;">URAIAN/PERIHAL</th>
+                  <th style="width: 12%;">URAIAN/PERIHAL</th>
                   <th style="width: 7%;">TGL PENYAMPAIAN</th>
                   <th style="width: 7%;">UNIT/BIDANG</th>
-                  <th style="width: 7%;">DISPOSISI</th>
-                  <th style="width: 8%;">KETERANGAN</th>
-                  <th style="width: 7%;">NO AGENDA</th>
+                  <th style="width: 6%;">DISPOSISI</th>
+                  <th style="width: 7%;">KETERANGAN</th>
+                  <th style="width: 6%;">NO AGENDA</th>
                   <th style="width: 7%;">DOKUMENTASI</th>
-                  <th style="width: 7%; text-align: center;">AKSI</th>
+                  <th style="width: 8%;">TINDAK LANJUT</th>
+                  <th style="width: 7%;">DOK. TINDAK LANJUT</th>
+                  <th style="width: 6%; text-align: center;">AKSI</th>
                 </tr>
               </thead>
               <tbody id="tableBody"></tbody>
@@ -222,21 +224,35 @@
           </div>
           <div class="form-group optional"><label>Keterangan</label><textarea id="formKeterangan" name="keterangan" class="form-control" rows="2" placeholder="Tambahkan keterangan jika diperlukan..."></textarea></div>
           
-          <!-- PERBAIKAN: Menambahkan kembali No Agenda di Form -->
           <div class="form-row">
             <div class="form-group optional">
               <label>No. Agenda</label>
               <input type="text" id="formNoAgenda" name="noAgenda" class="form-control">
             </div>
             <div class="form-group optional">
-              <label>Dokumentasi (PDF/JPG/PNG, Maks 5MB)</label>
+              <label>Dokumentasi Awal (PDF/JPG/PNG, Maks 5MB)</label>
               <div class="file-upload-wrapper">
-                <input type="file" id="formDokumentasi" name="dokumentasi" accept=".pdf,.jpg,.jpeg,.png,.gif" onchange="handleFileSelect(this)">
+                <input type="file" id="formDokumentasi" name="dokumentasi" accept=".pdf,.jpg,.jpeg,.png,.gif" onchange="handleFileSelect(this, 'dokumentasi')">
                 <label for="formDokumentasi" class="file-upload-label" id="fileUploadLabel"><i class="fas fa-cloud-upload-alt"></i> Klik untuk upload file</label>
-                <div class="file-info" id="fileInfo"><div class="file-name" id="fileName"></div><div class="file-actions"><button type="button" class="btn btn-sm btn-danger" onclick="clearFile()"><i class="fas fa-trash"></i> Hapus</button></div></div>
+                <div class="file-info" id="fileInfo"><div class="file-name" id="fileName"></div><div class="file-actions"><button type="button" class="btn btn-sm btn-danger" onclick="clearFile('dokumentasi')"><i class="fas fa-trash"></i> Hapus</button></div></div>
               </div>
               <div id="existingFile" style="margin-top: 0.5rem; display: none;"><a href="#" id="existingFileLink" target="_blank" class="dokumentasi-link"><i class="fas fa-file-alt"></i> <span id="existingFileName">Lihat File</span></a></div>
             </div>
+          </div>
+
+          <!-- KOLOM BARU: TINDAK LANJUT & DOKUMENTASI TINDAK LANJUT -->
+          <div class="form-group optional" style="margin-top: 1rem; border-top: 1px dashed var(--border-color); padding-top: 1rem;">
+            <label style="color: var(--primary-color); font-weight: 600;"><i class="fas fa-tasks"></i> Tindak Lanjut</label>
+            <textarea id="formTindakLanjut" name="tindakLanjut" class="form-control" rows="2" placeholder="Isi tindak lanjut surat ini..."></textarea>
+          </div>
+          <div class="form-group optional">
+            <label>Dokumentasi Tindak Lanjut (PDF/JPG/PNG, Maks 5MB)</label>
+            <div class="file-upload-wrapper">
+              <input type="file" id="formDokumentasiTL" name="dokumentasiTindakLanjut" accept=".pdf,.jpg,.jpeg,.png,.gif" onchange="handleFileSelect(this, 'tindakLanjut')">
+              <label for="formDokumentasiTL" class="file-upload-label" id="fileUploadLabelTL"><i class="fas fa-cloud-upload-alt"></i> Klik untuk upload file tindak lanjut</label>
+              <div class="file-info" id="fileInfoTL"><div class="file-name" id="fileNameTL"></div><div class="file-actions"><button type="button" class="btn btn-sm btn-danger" onclick="clearFile('tindakLanjut')"><i class="fas fa-trash"></i> Hapus</button></div></div>
+            </div>
+            <div id="existingFileTL" style="margin-top: 0.5rem; display: none;"><a href="#" id="existingFileLinkTL" target="_blank" class="dokumentasi-link"><i class="fas fa-file-alt"></i> <span id="existingFileNameTL">Lihat File Tindak Lanjut</span></a></div>
           </div>
 
           <div class="modal-footer">
@@ -248,9 +264,6 @@
     </div>
 
     <script>
-      // ==========================================
-      // KONFIGURASI API (WAJIB DIISI)
-      // ==========================================
       const API_URL = 'https://script.google.com/macros/s/AKfycbx9PkOSNW4xgavCh3fc4omCSA3lgLRULd_nPYLlBJn-KX-J9JgPFNr0wT_CsCEC03mx/exec';
       
       let allData = [];
@@ -258,8 +271,12 @@
       let currentPage = 1;
       const pageSize = 50;
       let isLoggedIn = false;
+      
+      // State untuk file upload
       let selectedFile = null;
       let existingFileUrl = '';
+      let selectedFileTL = null;
+      let existingFileUrlTL = '';
       
       async function callAPI(action, payload = {}) {
         try {
@@ -337,20 +354,27 @@
         document.getElementById('infoMessage').classList.remove('active');
       }
       
-      function handleFileSelect(input) {
+      function handleFileSelect(input, type) {
         const file = input.files[0];
         if (file) {
           const maxSize = 5 * 1024 * 1024;
           if (file.size > maxSize) {
             alert('⚠️ Ukuran file terlalu besar! Maksimal 5 MB.\nUkuran file Anda: ' + formatFileSize(file.size));
             input.value = '';
-            clearFile();
+            clearFile(type);
             return;
           }
-          selectedFile = file;
-          document.getElementById('fileName').textContent = file.name + ' (' + formatFileSize(file.size) + ')';
-          document.getElementById('fileInfo').classList.add('active');
-          document.getElementById('fileUploadLabel').innerHTML = '<i class="fas fa-check-circle" style="color: var(--success-color);"></i> File siap diupload: ' + file.name;
+          if (type === 'tindakLanjut') {
+            selectedFileTL = file;
+            document.getElementById('fileNameTL').textContent = file.name + ' (' + formatFileSize(file.size) + ')';
+            document.getElementById('fileInfoTL').classList.add('active');
+            document.getElementById('fileUploadLabelTL').innerHTML = '<i class="fas fa-check-circle" style="color: var(--success-color);"></i> File siap diupload: ' + file.name;
+          } else {
+            selectedFile = file;
+            document.getElementById('fileName').textContent = file.name + ' (' + formatFileSize(file.size) + ')';
+            document.getElementById('fileInfo').classList.add('active');
+            document.getElementById('fileUploadLabel').innerHTML = '<i class="fas fa-check-circle" style="color: var(--success-color);"></i> File siap diupload: ' + file.name;
+          }
         }
       }
       
@@ -362,11 +386,18 @@
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
       }
       
-      function clearFile() {
-        selectedFile = null;
-        document.getElementById('formDokumentasi').value = '';
-        document.getElementById('fileInfo').classList.remove('active');
-        document.getElementById('fileUploadLabel').innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Klik untuk upload file';
+      function clearFile(type) {
+        if (type === 'tindakLanjut') {
+          selectedFileTL = null;
+          document.getElementById('formDokumentasiTL').value = '';
+          document.getElementById('fileInfoTL').classList.remove('active');
+          document.getElementById('fileUploadLabelTL').innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Klik untuk upload file tindak lanjut';
+        } else {
+          selectedFile = null;
+          document.getElementById('formDokumentasi').value = '';
+          document.getElementById('fileInfo').classList.remove('active');
+          document.getElementById('fileUploadLabel').innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Klik untuk upload file';
+        }
       }
       
       function readFileAsBase64(file) {
@@ -433,10 +464,12 @@
         
         form.reset();
         document.getElementById('formMode').value = mode;
-        selectedFile = null;
-        existingFileUrl = '';
-        clearFile();
+        selectedFile = null; existingFileUrl = '';
+        selectedFileTL = null; existingFileUrlTL = '';
+        clearFile('dokumentasi');
+        clearFile('tindakLanjut');
         document.getElementById('existingFile').style.display = 'none';
+        document.getElementById('existingFileTL').style.display = 'none';
         
         if (mode === 'edit' && rowNumber) {
           title.textContent = 'Edit Data Surat';
@@ -454,13 +487,20 @@
           document.getElementById('formUnitBidang').value = rowData.unitBidang || '';
           document.getElementById('formDisposisi').value = rowData.disposisi || '';
           document.getElementById('formKeterangan').value = rowData.keterangan || '';
-          document.getElementById('formNoAgenda').value = rowData.noAgenda || ''; // PERBAIKAN
+          document.getElementById('formNoAgenda').value = rowData.noAgenda || '';
+          document.getElementById('formTindakLanjut').value = rowData.tindakLanjut || '';
           
           if (rowData.dokumentasi && rowData.dokumentasi !== '-') {
             existingFileUrl = rowData.dokumentasi;
             document.getElementById('existingFileLink').href = rowData.dokumentasi;
             document.getElementById('existingFileName').textContent = 'Lihat File Dokumentasi';
             document.getElementById('existingFile').style.display = 'block';
+          }
+          if (rowData.dokumentasiTindakLanjut && rowData.dokumentasiTindakLanjut !== '-') {
+            existingFileUrlTL = rowData.dokumentasiTindakLanjut;
+            document.getElementById('existingFileLinkTL').href = rowData.dokumentasiTindakLanjut;
+            document.getElementById('existingFileNameTL').textContent = 'Lihat File Tindak Lanjut';
+            document.getElementById('existingFileTL').style.display = 'block';
           }
         } else {
           title.textContent = 'Tambah Data Surat Baru';
@@ -472,10 +512,12 @@
       
       function closeModal() {
         document.getElementById('crudModal').classList.remove('active');
-        selectedFile = null;
-        existingFileUrl = '';
-        clearFile();
+        selectedFile = null; existingFileUrl = '';
+        selectedFileTL = null; existingFileUrlTL = '';
+        clearFile('dokumentasi');
+        clearFile('tindakLanjut');
         document.getElementById('existingFile').style.display = 'none';
+        document.getElementById('existingFileTL').style.display = 'none';
       }
       
       function convertToInputDate(dateStr) {
@@ -493,32 +535,41 @@
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
         
         let dokumentasiUrl = existingFileUrl;
+        let dokumentasiTLUrl = existingFileUrlTL;
         
-        if (selectedFile) {
-          try {
-            showMessage('Mengupload file ke Drive, mohon tunggu...', 'info');
+        try {
+          if (selectedFile) {
+            showMessage('Mengupload file dokumentasi awal, mohon tunggu...', 'info');
             const base64Data = await readFileAsBase64(selectedFile);
             const uploadResult = await callAPI('uploadFile', {
-              base64: base64Data,
-              filename: selectedFile.name,
-              mimetype: selectedFile.type
+              base64: base64Data, filename: selectedFile.name, mimetype: selectedFile.type
             });
-            
             if (uploadResult.success) {
               dokumentasiUrl = uploadResult.fileUrl;
-              showMessage('File berhasil diupload!', 'success');
             } else {
               throw new Error(uploadResult.error || 'Gagal upload ke Drive');
             }
-          } catch (error) {
-            showMessage('Gagal upload file: ' + error.message, 'error');
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-save"></i> Simpan Data';
-            return;
           }
+          
+          if (selectedFileTL) {
+            showMessage('Mengupload file dokumentasi tindak lanjut, mohon tunggu...', 'info');
+            const base64DataTL = await readFileAsBase64(selectedFileTL);
+            const uploadResultTL = await callAPI('uploadFile', {
+              base64: base64DataTL, filename: selectedFileTL.name, mimetype: selectedFileTL.type
+            });
+            if (uploadResultTL.success) {
+              dokumentasiTLUrl = uploadResultTL.fileUrl;
+            } else {
+              throw new Error(uploadResultTL.error || 'Gagal upload ke Drive');
+            }
+          }
+        } catch (error) {
+          showMessage('Gagal upload file: ' + error.message, 'error');
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-save"></i> Simpan Data';
+          return;
         }
         
-        // PERBAIKAN: Menambahkan noAgenda ke formData
         const formData = {
           rowNumber: document.getElementById('formRowNumber').value,
           no: document.getElementById('formNo').value,
@@ -532,7 +583,9 @@
           disposisi: document.getElementById('formDisposisi').value,
           keterangan: document.getElementById('formKeterangan').value,
           noAgenda: document.getElementById('formNoAgenda').value,
-          dokumentasi: dokumentasiUrl
+          dokumentasi: dokumentasiUrl,
+          tindakLanjut: document.getElementById('formTindakLanjut').value,
+          dokumentasiTindakLanjut: dokumentasiTLUrl
         };
         
         const mode = document.getElementById('formMode').value;
@@ -608,10 +661,16 @@
           const keteranganText = row.keterangan ? escapeHtml(row.keterangan) : '-';
           const tglPenyampaianText = row.tglPenyampaian && row.tglPenyampaian !== '-' ? escapeHtml(row.tglPenyampaian) : '-';
           const tglSuratText = row.tglSurat && row.tglSurat !== '-' ? escapeHtml(row.tglSurat) : '-';
+          const tindakLanjutText = row.tindakLanjut ? escapeHtml(row.tindakLanjut) : '-';
           
           let dokumentasiHtml = '-';
           if (row.dokumentasi && row.dokumentasi !== '-') {
             dokumentasiHtml = `<a href="${escapeHtml(row.dokumentasi)}" target="_blank" class="dokumentasi-link"><i class="fas fa-file-alt"></i> Lihat</a>`;
+          }
+          
+          let dokumentasiTLHtml = '-';
+          if (row.dokumentasiTindakLanjut && row.dokumentasiTindakLanjut !== '-') {
+            dokumentasiTLHtml = `<a href="${escapeHtml(row.dokumentasiTindakLanjut)}" target="_blank" class="dokumentasi-link"><i class="fas fa-file-alt"></i> Lihat</a>`;
           }
           
           const actionButtons = isLoggedIn ? `
@@ -621,7 +680,6 @@
             </td>
           ` : '<td>-</td>';
           
-          // PERBAIKAN: Menambahkan kolom No Agenda di render tabel
           tr.innerHTML = `
             <td>${escapeHtml(row.no) || (startIndex + index + 1)}</td>
             <td><strong>${escapeHtml(row.nomorSurat)}</strong></td>
@@ -635,6 +693,8 @@
             <td class="keterangan-cell" title="${keteranganText}">${keteranganText}</td>
             <td>${escapeHtml(row.noAgenda) || '-'}</td>
             <td class="dokumentasi-cell">${dokumentasiHtml}</td>
+            <td class="keterangan-cell" title="${tindakLanjutText}">${tindakLanjutText}</td>
+            <td class="dokumentasi-cell">${dokumentasiTLHtml}</td>
             ${actionButtons}
           `;
           fragment.appendChild(tr);
