@@ -528,47 +528,34 @@
         return '';
       }
       
-      async function handleSave(e) {
-        e.preventDefault();
-        const btn = document.getElementById('saveBtn');
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
-        
-        let dokumentasiUrl = existingFileUrl;
-        let dokumentasiTLUrl = existingFileUrlTL;
-        
-        try {
-          if (selectedFile) {
-            showMessage('Mengupload file dokumentasi awal, mohon tunggu...', 'info');
-            const base64Data = await readFileAsBase64(selectedFile);
-            const uploadResult = await callAPI('uploadFile', {
-              base64: base64Data, filename: selectedFile.name, mimetype: selectedFile.type
-            });
-            if (uploadResult.success) {
-              dokumentasiUrl = uploadResult.fileUrl;
-            } else {
-              throw new Error(uploadResult.error || 'Gagal upload ke Drive');
-            }
-          }
-          
-          if (selectedFileTL) {
-            showMessage('Mengupload file dokumentasi tindak lanjut, mohon tunggu...', 'info');
-            const base64DataTL = await readFileAsBase64(selectedFileTL);
-            const uploadResultTL = await callAPI('uploadFile', {
-              base64: base64DataTL, filename: selectedFileTL.name, mimetype: selectedFileTL.type
-            });
-            if (uploadResultTL.success) {
-              dokumentasiTLUrl = uploadResultTL.fileUrl;
-            } else {
-              throw new Error(uploadResultTL.error || 'Gagal upload ke Drive');
-            }
-          }
-        } catch (error) {
-          showMessage('Gagal upload file: ' + error.message, 'error');
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fas fa-save"></i> Simpan Data';
-          return;
-        }
+        async function callAPI(action, payload = {}) {
+  try {
+    const requestData = { action, ...payload };
+    console.log(' Sending request:', requestData);
+    
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(requestData)
+    });
+    
+    console.log('📥 Response status:', response.status);
+    const rawText = await response.text();
+    console.log('📄 Raw response:', rawText);
+    
+    // Cek apakah response HTML atau JSON
+    if (rawText.trim().startsWith('<')) {
+      throw new Error('Server mengembalikan HTML. Cek URL API dan deployment.');
+    }
+    
+    const result = JSON.parse(rawText);
+    if (!result.success) throw new Error(result.error || 'Terjadi kesalahan pada server');
+    return result.data;
+  } catch (error) {
+    console.error('❌ API Error:', error);
+    throw error;
+  }
+} 
         
         const formData = {
           rowNumber: document.getElementById('formRowNumber').value,
