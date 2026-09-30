@@ -23,6 +23,8 @@
       .btn-primary:hover { background: var(--primary-dark); }
       .btn-danger { background: var(--danger-color); color: var(--white); }
       .btn-warning { background: var(--warning-color); color: var(--text-dark); }
+      .btn-success { background: var(--success-color); color: var(--white); }
+      .btn-success:hover { background: #218838; }
       .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.75rem; margin-right: 0.25rem; }
       .file-upload-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
       .file-upload-wrapper input[type=file] { position: absolute; left: -9999px; }
@@ -66,7 +68,7 @@
       .filter-select { padding: 0.75rem 2.5rem 0.75rem 1rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 0.875rem; background: var(--white); cursor: pointer; font-family: inherit; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236c757d' d='M6 9L1 4h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; appearance: none; }
       .filter-select.active-filter { border-color: var(--danger-color); background-color: #fff5f5; }
       .table-container { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border-color); }
-      table { width: 100%; border-collapse: collapse; font-size: 0.875rem; min-width: 1600px; } /* Diperlebar untuk 14 kolom */
+      table { width: 100%; border-collapse: collapse; font-size: 0.875rem; min-width: 1600px; }
       thead { background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); color: var(--white); }
       th { padding: 1rem; text-align: left; font-weight: 600; white-space: nowrap; }
       td { padding: 1rem; border-bottom: 1px solid var(--border-color); vertical-align: top; }
@@ -156,7 +158,8 @@
             <h2 class="section-title"><i class="fas fa-list-ul"></i> Data Surat Masuk</h2>
             <div class="search-filter">
               <button class="btn btn-primary" onclick="openModal('add')" style="width: auto; display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-plus"></i> Tambah Surat</button>
-              <div class="search-box"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Cari nomor surat, asal, atau perihal..." onkeyup="handleSearch()"></div>
+              <button class="btn btn-success" onclick="exportData()" style="width: auto; display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-file-excel"></i> Export</button>
+              <div class="search-box"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Cari nomor surat, asal, atau perihal..." onkeyup="debounceSearch()"></div>
               <select class="filter-select" id="unitFilter" onchange="handleFilter()">
                 <option value="">Semua Unit/Bidang</option>
                 <option value="__BELUM_DITUJUKAN__" style="color: var(--danger-color); font-weight: 600;">⚠️ Belum Ditujukan</option>
@@ -240,7 +243,6 @@
             </div>
           </div>
 
-          <!-- KOLOM BARU: TINDAK LANJUT & DOKUMENTASI TINDAK LANJUT -->
           <div class="form-group optional" style="margin-top: 1rem; border-top: 1px dashed var(--border-color); padding-top: 1rem;">
             <label style="color: var(--primary-color); font-weight: 600;"><i class="fas fa-tasks"></i> Tindak Lanjut</label>
             <textarea id="formTindakLanjut" name="tindakLanjut" class="form-control" rows="2" placeholder="Isi tindak lanjut surat ini..."></textarea>
@@ -271,26 +273,46 @@
       let currentPage = 1;
       const pageSize = 50;
       let isLoggedIn = false;
-      
-      // State untuk file upload
       let selectedFile = null;
       let existingFileUrl = '';
       let selectedFileTL = null;
       let existingFileUrlTL = '';
+      let searchTimeout = null;
+      
+      // ==========================================
+      // OPTIMASI: Debounce untuk search
+      // ==========================================
+      function debounceSearch() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          handleSearch();
+        }, 300); // Tunggu 300ms setelah user selesai mengetik
+      }
       
       async function callAPI(action, payload = {}) {
         try {
           const requestData = { action, ...payload };
+          console.log('📤 Sending request:', requestData);
+          
           const response = await fetch(API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(requestData)
           });
-          const result = await response.json();
+          
+          console.log('📥 Response status:', response.status);
+          const rawText = await response.text();
+          console.log('📄 Raw response:', rawText);
+          
+          if (rawText.trim().startsWith('<')) {
+            throw new Error('Server mengembalikan HTML. Cek URL API dan deployment.');
+          }
+          
+          const result = JSON.parse(rawText);
           if (!result.success) throw new Error(result.error || 'Terjadi kesalahan pada server');
           return result.data;
         } catch (error) {
-          console.error('API Error:', error);
+          console.error('❌ API Error:', error);
           throw error;
         }
       }
@@ -445,7 +467,7 @@
       function updateUnitDropdown(units) {
         const select = document.getElementById('unitFilter');
         const datalist = document.getElementById('unitList');
-        select.innerHTML = '<option value="">Semua Unit/Bidang</option><option value="__BELUM_DITUJUKAN__" style="color: var(--danger-color); font-weight: 600;">⚠️ Belum Ditujukan</option>';
+        select.innerHTML = '<option value="">Semua Unit/Bidang</option><option value="__BELUM_DITUJUKAN__" style="color: var(--danger-color); font-weight: 600;">️ Belum Ditujukan</option>';
         datalist.innerHTML = '';
         units.forEach(unit => {
           const option = document.createElement('option');
@@ -528,34 +550,47 @@
         return '';
       }
       
-        async function callAPI(action, payload = {}) {
-  try {
-    const requestData = { action, ...payload };
-    console.log(' Sending request:', requestData);
-    
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(requestData)
-    });
-    
-    console.log('📥 Response status:', response.status);
-    const rawText = await response.text();
-    console.log('📄 Raw response:', rawText);
-    
-    // Cek apakah response HTML atau JSON
-    if (rawText.trim().startsWith('<')) {
-      throw new Error('Server mengembalikan HTML. Cek URL API dan deployment.');
-    }
-    
-    const result = JSON.parse(rawText);
-    if (!result.success) throw new Error(result.error || 'Terjadi kesalahan pada server');
-    return result.data;
-  } catch (error) {
-    console.error('❌ API Error:', error);
-    throw error;
-  }
-} 
+      async function handleSave(e) {
+        e.preventDefault();
+        const btn = document.getElementById('saveBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+        
+        let dokumentasiUrl = existingFileUrl;
+        let dokumentasiTLUrl = existingFileUrlTL;
+        
+        try {
+          if (selectedFile) {
+            showMessage('Mengupload file dokumentasi awal, mohon tunggu...', 'info');
+            const base64Data = await readFileAsBase64(selectedFile);
+            const uploadResult = await callAPI('uploadFile', {
+              base64: base64Data, filename: selectedFile.name, mimetype: selectedFile.type
+            });
+            if (uploadResult.success) {
+              dokumentasiUrl = uploadResult.fileUrl;
+            } else {
+              throw new Error(uploadResult.error || 'Gagal upload ke Drive');
+            }
+          }
+          
+          if (selectedFileTL) {
+            showMessage('Mengupload file dokumentasi tindak lanjut, mohon tunggu...', 'info');
+            const base64DataTL = await readFileAsBase64(selectedFileTL);
+            const uploadResultTL = await callAPI('uploadFile', {
+              base64: base64DataTL, filename: selectedFileTL.name, mimetype: selectedFileTL.type
+            });
+            if (uploadResultTL.success) {
+              dokumentasiTLUrl = uploadResultTL.fileUrl;
+            } else {
+              throw new Error(uploadResultTL.error || 'Gagal upload ke Drive');
+            }
+          }
+        } catch (error) {
+          showMessage('Gagal upload file: ' + error.message, 'error');
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-save"></i> Simpan Data';
+          return;
+        }
         
         const formData = {
           rowNumber: document.getElementById('formRowNumber').value,
@@ -601,6 +636,57 @@
             .catch(error => {
               showMessage('Gagal menghapus: ' + error.message, 'error');
             });
+        }
+      }
+      
+      // ==========================================
+      // FITUR EXPORT DATA KE CSV
+      // ==========================================
+      async function exportData() {
+        const btn = event.target.closest('button');
+        const originalHTML = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Exporting...';
+        
+        try {
+          const searchQuery = document.getElementById('searchInput').value.trim();
+          const unitFilter = document.getElementById('unitFilter').value.trim();
+          
+          const filter = {
+            searchQuery: searchQuery,
+            unitBidang: unitFilter
+          };
+          
+          showMessage('Mempersiapkan data untuk export...', 'info');
+          
+          const result = await callAPI('exportData', { filter });
+          
+          if (result.success && result.csvData) {
+            // Decode base64 CSV
+            const csvContent = atob(result.csvData);
+            
+            // Tambahkan BOM untuk Excel agar bisa baca UTF-8 dengan benar
+            const BOM = '\uFEFF';
+            const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+            
+            // Download file
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = result.filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+            
+            showMessage(`✅ Export berhasil! ${result.totalRows} data diexport ke ${result.filename}`, 'success');
+          } else {
+            throw new Error(result.error || 'Gagal export data');
+          }
+        } catch (error) {
+          showMessage('Gagal export: ' + error.message, 'error');
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = originalHTML;
         }
       }
       
