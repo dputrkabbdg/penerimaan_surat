@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Penerimaan Surat 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+      :root { --primary-color: #1f6366; --primary-dark: #184d4f; --primary-light: #2a7a7d; --secondary-color: #f8f9fa; --accent-color: #e8f4f8; --text-dark: #2c3e50; --text-light: #6c757d; --border-color: #dee2e6; --danger-color: #dc3545; --warning-color: #ffc107; --info-color: #17a2b8; --success-color: #28a745; --white: #ffffff; --shadow: 0 2px 10px rgba(31, 99, 102, 0.1); --shadow-lg: 0 4px 20px rgba(31, 99, 102, 0.15); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: 'Inter', sans-serif; background-color: #f5f7f8; color: var(--text-dark); line-height: 1.6; }
+      #loginScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); display: flex; justify-content: center; align-items: center; z-index: 9999; }
+      .login-box { background: var(--white); padding: 2.5rem; border-radius: 12px; box-shadow: var(--shadow-lg); width: 100%; max-width: 400px; text-align: center; }
+      .login-box h2 { color: var(--primary-color); margin-bottom: 1.5rem; }
+      .form-group { margin-bottom: 1rem; text-align: left; }
+      .form-group label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; color: var(--text-dark); }
+      .form-control { width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 0.875rem; font-family: inherit; transition: all 0.3s; }
+      .form-control:focus { outline: none; border-color: var(--primary-color); }
+      .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.3s; font-family: inherit; }
+      .btn-primary { background: var(--primary-color); color: var(--white); width: 100%; }
+      .btn-primary:hover { background: var(--primary-dark); }
+      .btn-danger { background: var(--danger-color); color: var(--white); }
+      .btn-warning { background: var(--warning-color); color: var(--text-dark); }
+      .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.75rem; margin-right: 0.25rem; }
+      .file-upload-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
+      .file-upload-wrapper input[type=file] { position: absolute; left: -9999px; }
+      .file-upload-label { display: block; padding: 0.75rem; background: var(--secondary-color); border: 2px dashed var(--border-color); border-radius: 8px; text-align: center; cursor: pointer; transition: all 0.3s; }
+      .file-upload-label:hover { border-color: var(--primary-color); background: var(--accent-color); }
+      .file-info { margin-top: 0.5rem; padding: 0.5rem; background: var(--accent-color); border-radius: 6px; font-size: 0.8rem; display: none; }
+      .file-info.active { display: block; }
+      .file-name { font-weight: 600; color: var(--primary-color); }
+      .dokumentasi-link { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.8rem; background: var(--accent-color); color: var(--primary-color); border-radius: 6px; text-decoration: none; font-size: 0.8rem; font-weight: 500; transition: all 0.3s; }
+      .dokumentasi-link:hover { background: var(--primary-color); color: var(--white); }
+      #dashboardContent { display: none; }
+      .header { background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); color: var(--white); padding: 1.5rem 2rem; box-shadow: var(--shadow-lg); position: sticky; top: 0; z-index: 1000; }
+      .header-content { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+      .header-left { display: flex; align-items: center; gap: 1rem; }
+      .logo { width: 50px; height: 50px; background: var(--white); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--primary-color); font-size: 1.5rem; }
+      .header-title h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem; }
+      .header-title p { font-size: 0.875rem; opacity: 0.9; }
+      .header-right { display: flex; align-items: center; gap: 1rem; }
+      .date-display { background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.875rem; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 0.5rem; }
+      .btn-logout { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); }
+      .btn-logout:hover { background: rgba(255,255,255,0.3); }
+      .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+      .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+      .stat-card { background: var(--white); border-radius: 12px; padding: 1.5rem; box-shadow: var(--shadow); border-left: 4px solid var(--primary-color); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+      .stat-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+      .stat-card.belum-ditujukan { border-left-color: var(--danger-color); background: linear-gradient(135deg, #fff5f5 0%, var(--white) 100%); }
+      .stat-card.belum-ditujukan .stat-icon { background: #fed7d7; color: var(--danger-color); }
+      .stat-card.belum-ditujukan .stat-value { color: var(--danger-color); }
+      .stat-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem; }
+      .stat-icon { width: 48px; height: 48px; background: var(--accent-color); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--primary-color); font-size: 1.25rem; }
+      .stat-value { font-size: 2rem; font-weight: 700; color: var(--primary-color); line-height: 1; }
+      .stat-label { color: var(--text-light); font-size: 0.875rem; font-weight: 500; }
+      .content-section { background: var(--white); border-radius: 12px; padding: 2rem; box-shadow: var(--shadow); margin-bottom: 2rem; }
+      .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+      .section-title { font-size: 1.25rem; font-weight: 600; color: var(--primary-color); display: flex; align-items: center; gap: 0.5rem; }
+      .search-filter { display: flex; gap: 1rem; flex-wrap: wrap; flex: 1; }
+      .search-box { flex: 1; min-width: 250px; position: relative; }
+      .search-box input { width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 0.875rem; font-family: inherit; }
+      .search-box input:focus { outline: none; border-color: var(--primary-color); }
+      .search-box i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-light); }
+      .filter-select { padding: 0.75rem 2.5rem 0.75rem 1rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 0.875rem; background: var(--white); cursor: pointer; font-family: inherit; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236c757d' d='M6 9L1 4h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; appearance: none; }
+      .filter-select.active-filter { border-color: var(--danger-color); background-color: #fff5f5; }
+      .table-container { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border-color); }
+      table { width: 100%; border-collapse: collapse; font-size: 0.875rem; min-width: 1400px; }
+      thead { background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); color: var(--white); }
+      th { padding: 1rem; text-align: left; font-weight: 600; white-space: nowrap; }
+      td { padding: 1rem; border-bottom: 1px solid var(--border-color); vertical-align: top; }
+      tbody tr:hover { background-color: var(--accent-color); }
+      tbody tr:nth-child(even) { background-color: #fafbfc; }
+      tbody tr.belum-ditujukan { background-color: #fff5f5; border-left: 3px solid var(--danger-color); }
+      tbody tr.belum-ditujukan:hover { background-color: #fed7d7; }
+      .badge { display: inline-block; padding: 0.35rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; background: var(--accent-color); color: var(--primary-color); border: 1px solid rgba(31, 99, 102, 0.2); }
+      .badge-belum { background: #fed7d7; color: var(--danger-color); border-color: var(--danger-color); }
+      .loading { display: none; text-align: center; padding: 3rem; }
+      .loading.active { display: block; }
+      .spinner { width: 40px; height: 40px; border: 4px solid var(--accent-color); border-top-color: var(--primary-color); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+      .modal.active { display: flex; }
+      .modal-content { background: var(--white); padding: 2rem; border-radius: 12px; width: 90%; max-width: 700px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); }
+      .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+      .modal-header h3 { color: var(--primary-color); }
+      .close-modal { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light); }
+      .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+      .form-group.optional label::after { content: ' (Opsional)'; color: var(--text-light); font-weight: 400; font-size: 0.75rem; }
+      .modal-footer { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem; }
+      .btn-secondary { background: var(--text-light); color: var(--white); }
+      .pagination { display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-top: 1.5rem; flex-wrap: wrap; }
+      .pagination button { padding: 0.5rem 1rem; border: 2px solid var(--border-color); background: var(--white); border-radius: 6px; cursor: pointer; font-size: 0.875rem; font-family: inherit; transition: all 0.3s; }
+      .pagination button:hover:not(:disabled) { border-color: var(--primary-color); color: var(--primary-color); }
+      .pagination button.active { background: var(--primary-color); color: var(--white); border-color: var(--primary-color); }
+      .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+      .pagination-info { text-align: center; margin-top: 1rem; color: var(--text-light); font-size: 0.875rem; }
+      .error-message { background: #fee; border: 1px solid #fcc; color: #c33; padding: 1rem; border-radius: 8px; margin: 1rem 0; display: none; }
+      .error-message.active { display: block; }
+      .success-message { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 1rem; border-radius: 8px; margin: 1rem 0; display: none; }
+      .success-message.active { display: block; }
+      .info-message { background: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; padding: 1rem; border-radius: 8px; margin: 1rem 0; display: none; }
+      .info-message.active { display: block; }
+      .keterangan-cell, .dokumentasi-cell { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      @media (max-width: 768px) {
+        .header-content { flex-direction: column; gap: 1rem; text-align: center; }
+        .container { padding: 1rem; }
+        .content-section { padding: 1rem; }
+        .stats-grid { grid-template-columns: 1fr; }
+        th, td { padding: 0.75rem 0.5rem; font-size: 0.8rem; }
+        .form-row { grid-template-columns: 1fr; }
+        .modal-content { width: 95%; padding: 1.5rem; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loginScreen">
+      <div class="login-box">
+        <div class="logo" style="margin: 0 auto 1rem auto;"><i class="fas fa-envelope-open-text"></i></div>
+        <h2>Login Admin</h2>
+        <div id="loginError" class="error-message" style="margin-bottom: 1rem; display: none;"></div>
+        <form id="loginForm" onsubmit="handleLogin(event)">
+          <div class="form-group"><label>Username</label><input type="text" id="username" class="form-control" required placeholder="Masukkan username"></div>
+          <div class="form-group"><label>Password</label><input type="password" id="password" class="form-control" required placeholder="Masukkan password"></div>
+          <button type="submit" class="btn btn-primary" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Masuk</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="dashboardContent">
+      <header class="header">
+        <div class="header-content">
+          <div class="header-left">
+            <div class="logo"><i class="fas fa-envelope-open-text"></i></div>
+            <div class="header-title"><h1>Dashboard Penerimaan Surat</h1><p>Tahun 2026 - Sistem Informasi Manajemen Surat Masuk</p></div>
+          </div>
+          <div class="header-right">
+            <div class="date-display"><i class="far fa-calendar-alt"></i><span id="dateText"></span></div>
+            <button class="btn btn-logout" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Keluar</button>
+          </div>
+        </div>
+      </header>
+      
+      <div class="container">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-header"><div><div class="stat-value" id="totalSurat">0</div><div class="stat-label">Total Surat Masuk</div></div><div class="stat-icon"><i class="fas fa-inbox"></i></div></div></div>
+          <div class="stat-card"><div class="stat-header"><div><div class="stat-value" id="suratBulanIni">0</div><div class="stat-label">Surat Bulan Ini</div></div><div class="stat-icon"><i class="fas fa-calendar-check"></i></div></div></div>
+          <div class="stat-card"><div class="stat-header"><div><div class="stat-value" id="suratHariIni">0</div><div class="stat-label">Surat Hari Ini</div></div><div class="stat-icon"><i class="fas fa-clock"></i></div></div></div>
+          <div class="stat-card"><div class="stat-header"><div><div class="stat-value" id="totalUnit">0</div><div class="stat-label">Unit/Bidang Penerima</div></div><div class="stat-icon"><i class="fas fa-sitemap"></i></div></div></div>
+          <div class="stat-card belum-ditujukan"><div class="stat-header"><div><div class="stat-value" id="belumDitujukan">0</div><div class="stat-label">Surat Belum Ditujukan</div></div><div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div></div></div>
+        </div>
+        
+        <div class="content-section">
+          <div class="section-header">
+            <h2 class="section-title"><i class="fas fa-list-ul"></i> Data Surat Masuk</h2>
+            <div class="search-filter">
+              <button class="btn btn-primary" onclick="openModal('add')" style="width: auto; display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-plus"></i> Tambah Surat</button>
+              <div class="search-box"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Cari nomor surat, asal, atau perihal..." onkeyup="handleSearch()"></div>
+              <select class="filter-select" id="unitFilter" onchange="handleFilter()">
+                <option value="">Semua Unit/Bidang</option>
+                <option value="__BELUM_DITUJUKAN__" style="color: var(--danger-color); font-weight: 600;">⚠️ Belum Ditujukan</option>
+              </select>
+            </div>
+          </div>
+          
+          <div id="globalMessage" class="success-message"></div>
+          <div id="infoMessage" class="info-message"></div>
+          <div class="loading active" id="loading"><div class="spinner"></div><p>Memuat data surat masuk...</p></div>
+          
+          <div class="table-container" id="tableContainer" style="display: none;">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 3%;">NO</th>
+                  <th style="width: 9%;">NOMOR SURAT</th>
+                  <th style="width: 7%;">TGL SURAT</th>
+                  <th style="width: 9%;">ASAL SURAT</th>
+                  <th style="width: 7%;">TGL PENERIMAAN</th>
+                  <th style="width: 15%;">URAIAN/PERIHAL</th>
+                  <th style="width: 7%;">TGL PENYAMPAIAN</th>
+                  <th style="width: 7%;">UNIT/BIDANG</th>
+                  <th style="width: 7%;">DISPOSISI</th>
+                  <th style="width: 8%;">KETERANGAN</th>
+                  <th style="width: 7%;">NO AGENDA</th>
+                  <th style="width: 7%;">DOKUMENTASI</th>
+                  <th style="width: 7%; text-align: center;">AKSI</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+          <div class="no-data" id="noData" style="display: none; text-align: center; padding: 3rem; color: var(--text-light);"><i class="fas fa-folder-open" style="font-size: 3rem; margin-bottom: 1rem; color: var(--primary-color); opacity: 0.3;"></i><p>Tidak ada data surat masuk yang ditemukan</p></div>
+          <div class="pagination" id="pagination" style="display: none;"></div>
+          <div class="pagination-info" id="paginationInfo" style="display: none;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="crudModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header"><h3 id="modalTitle">Tambah Data Surat</h3><button class="close-modal" onclick="closeModal()">&times;</button></div>
+        <form id="crudForm" onsubmit="handleSave(event)">
+          <input type="hidden" id="formRowNumber" name="rowNumber">
+          <input type="hidden" id="formMode" name="mode" value="add">
+          <div class="form-row">
+            <div class="form-group"><label>No. Urut *</label><input type="number" id="formNo" name="no" class="form-control" required></div>
+            <div class="form-group"><label>Nomor Surat *</label><input type="text" id="formNomorSurat" name="nomorSurat" class="form-control" required></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group optional"><label>Tanggal Surat</label><input type="date" id="formTglSurat" name="tglSurat" class="form-control"></div>
+            <div class="form-group"><label>Asal Surat *</label><input type="text" id="formAsalSurat" name="asalSurat" class="form-control" required></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Tanggal Penerimaan *</label><input type="date" id="formTglPenerimaan" name="tglPenerimaan" class="form-control" required></div>
+            <div class="form-group optional"><label>Unit/Bidang Penerima</label><input type="text" id="formUnitBidang" name="unitBidang" class="form-control" list="unitList"><datalist id="unitList"></datalist></div>
+          </div>
+          <div class="form-group"><label>Uraian/Perihal *</label><textarea id="formUraian" name="uraian" class="form-control" rows="3" required></textarea></div>
+          <div class="form-row">
+            <div class="form-group optional"><label>Tanggal Penyampaian</label><input type="date" id="formTglPenyampaian" name="tglPenyampaian" class="form-control"></div>
+            <div class="form-group optional"><label>Disposisi</label><input type="text" id="formDisposisi" name="disposisi" class="form-control"></div>
+          </div>
+          <div class="form-group optional"><label>Keterangan</label><textarea id="formKeterangan" name="keterangan" class="form-control" rows="2" placeholder="Tambahkan keterangan jika diperlukan..."></textarea></div>
+          
+          <!-- PERBAIKAN: Menambahkan kembali No Agenda di Form -->
+          <div class="form-row">
+            <div class="form-group optional">
+              <label>No. Agenda</label>
+              <input type="text" id="formNoAgenda" name="noAgenda" class="form-control">
+            </div>
+            <div class="form-group optional">
+              <label>Dokumentasi (PDF/JPG/PNG, Maks 5MB)</label>
+              <div class="file-upload-wrapper">
+                <input type="file" id="formDokumentasi" name="dokumentasi" accept=".pdf,.jpg,.jpeg,.png,.gif" onchange="handleFileSelect(this)">
+                <label for="formDokumentasi" class="file-upload-label" id="fileUploadLabel"><i class="fas fa-cloud-upload-alt"></i> Klik untuk upload file</label>
+                <div class="file-info" id="fileInfo"><div class="file-name" id="fileName"></div><div class="file-actions"><button type="button" class="btn btn-sm btn-danger" onclick="clearFile()"><i class="fas fa-trash"></i> Hapus</button></div></div>
+              </div>
+              <div id="existingFile" style="margin-top: 0.5rem; display: none;"><a href="#" id="existingFileLink" target="_blank" class="dokumentasi-link"><i class="fas fa-file-alt"></i> <span id="existingFileName">Lihat File</span></a></div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">Batal</button>
+            <button type="submit" class="btn btn-primary" id="saveBtn"><i class="fas fa-save"></i> Simpan Data</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // ==========================================
+      // KONFIGURASI API (WAJIB DIISI)
+      // ==========================================
+      const API_URL = 'https://script.google.com/macros/s/AKfycbx9PkOSNW4xgavCh3fc4omCSA3lgLRULd_nPYLlBJn-KX-J9JgPFNr0wT_CsCEC03mx/exec';
+      
+      let allData = [];
+      let filteredData = [];
+      let currentPage = 1;
+      const pageSize = 50;
+      let isLoggedIn = false;
+      let selectedFile = null;
+      let existingFileUrl = '';
+      
+      async function callAPI(action, payload = {}) {
+        try {
+          const requestData = { action, ...payload };
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(requestData)
+          });
+          const result = await response.json();
+          if (!result.success) throw new Error(result.error || 'Terjadi kesalahan pada server');
+          return result.data;
+        } catch (error) {
+          console.error('API Error:', error);
+          throw error;
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', function() {
+        updateDate();
+        if (sessionStorage.getItem('isAdminLoggedIn') === 'true') showDashboard();
+      });
+      
+      function updateDate() {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('dateText').textContent = new Date().toLocaleDateString('id-ID', options);
+      }
+      
+      function handleLogin(e) {
+        e.preventDefault();
+        const user = document.getElementById('username').value;
+        const pass = document.getElementById('password').value;
+        const btn = document.getElementById('loginBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memverifikasi...';
+        
+        callAPI('checkLogin', { username: user, password: pass })
+          .then(result => {
+            if (result.isValid) {
+              sessionStorage.setItem('isAdminLoggedIn', 'true');
+              showDashboard();
+            } else {
+              document.getElementById('loginError').textContent = 'Username atau password salah!';
+              document.getElementById('loginError').style.display = 'block';
+              btn.disabled = false;
+              btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk';
+            }
+          })
+          .catch(error => {
+            document.getElementById('loginError').textContent = 'Error: ' + error.message;
+            document.getElementById('loginError').style.display = 'block';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk';
+          });
+      }
+      
+      function showDashboard() {
+        isLoggedIn = true;
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('dashboardContent').style.display = 'block';
+        loadData();
+      }
+      
+      function handleLogout() {
+        sessionStorage.removeItem('isAdminLoggedIn');
+        isLoggedIn = false;
+        document.getElementById('dashboardContent').style.display = 'none';
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('loginForm').reset();
+        document.getElementById('loginError').style.display = 'none';
+        document.getElementById('loginBtn').disabled = false;
+        document.getElementById('loginBtn').innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk';
+        allData = []; filteredData = []; currentPage = 1;
+        document.getElementById('globalMessage').classList.remove('active');
+        document.getElementById('infoMessage').classList.remove('active');
+      }
+      
+      function handleFileSelect(input) {
+        const file = input.files[0];
+        if (file) {
+          const maxSize = 5 * 1024 * 1024;
+          if (file.size > maxSize) {
+            alert('⚠️ Ukuran file terlalu besar! Maksimal 5 MB.\nUkuran file Anda: ' + formatFileSize(file.size));
+            input.value = '';
+            clearFile();
+            return;
+          }
+          selectedFile = file;
+          document.getElementById('fileName').textContent = file.name + ' (' + formatFileSize(file.size) + ')';
+          document.getElementById('fileInfo').classList.add('active');
+          document.getElementById('fileUploadLabel').innerHTML = '<i class="fas fa-check-circle" style="color: var(--success-color);"></i> File siap diupload: ' + file.name;
+        }
+      }
+      
+      function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      }
+      
+      function clearFile() {
+        selectedFile = null;
+        document.getElementById('formDokumentasi').value = '';
+        document.getElementById('fileInfo').classList.remove('active');
+        document.getElementById('fileUploadLabel').innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Klik untuk upload file';
+      }
+      
+      function readFileAsBase64(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result.split(',')[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }
+      
+      function loadData() {
+        document.getElementById('loading').classList.add('active');
+        document.getElementById('tableContainer').style.display = 'none';
+        document.getElementById('pagination').style.display = 'none';
+        document.getElementById('paginationInfo').style.display = 'none';
+        
+        callAPI('getDashboardData')
+          .then(onAllDataLoaded)
+          .catch(error => { showError('Gagal memuat data: ' + error.message); });
+      }
+      
+      function onAllDataLoaded(result) {
+        if (!result || !result.suratData) { showError('Data tidak valid atau kosong'); return; }
+        allData = result.suratData;
+        filteredData = [...allData];
+        currentPage = 1;
+        
+        if (result.stats) {
+          animateValue("totalSurat", 0, result.stats.totalSurat, 500);
+          animateValue("suratBulanIni", 0, result.stats.suratBulanIni, 500);
+          animateValue("suratHariIni", 0, result.stats.suratHariIni, 500);
+          document.getElementById('totalUnit').textContent = Object.keys(result.stats.unitBidangCount).length;
+          animateValue("belumDitujukan", 0, result.stats.belumDitujukan || 0, 500);
+          if (result.stats.belumDitujukan > 0) showInfoMessage(`⚠️ Ada ${result.stats.belumDitujukan} surat yang belum ditugaskan ke Unit/Bidang`);
+        }
+        if (result.uniqueUnits && result.uniqueUnits.length > 0) updateUnitDropdown(result.uniqueUnits);
+        
+        renderTable();
+        renderPagination();
+        document.getElementById('loading').classList.remove('active');
+        document.getElementById('tableContainer').style.display = 'block';
+      }
+      
+      function updateUnitDropdown(units) {
+        const select = document.getElementById('unitFilter');
+        const datalist = document.getElementById('unitList');
+        select.innerHTML = '<option value="">Semua Unit/Bidang</option><option value="__BELUM_DITUJUKAN__" style="color: var(--danger-color); font-weight: 600;">⚠️ Belum Ditujukan</option>';
+        datalist.innerHTML = '';
+        units.forEach(unit => {
+          const option = document.createElement('option');
+          option.value = unit; option.textContent = unit;
+          select.appendChild(option);
+          const dlOption = document.createElement('option');
+          dlOption.value = unit;
+          datalist.appendChild(dlOption);
+        });
+      }
+      
+      function openModal(mode, rowNumber = null) {
+        const modal = document.getElementById('crudModal');
+        const title = document.getElementById('modalTitle');
+        const form = document.getElementById('crudForm');
+        
+        form.reset();
+        document.getElementById('formMode').value = mode;
+        selectedFile = null;
+        existingFileUrl = '';
+        clearFile();
+        document.getElementById('existingFile').style.display = 'none';
+        
+        if (mode === 'edit' && rowNumber) {
+          title.textContent = 'Edit Data Surat';
+          const rowData = allData.find(r => r.rowNumber === rowNumber);
+          if (!rowData) { showMessage('Data tidak ditemukan!', 'error'); return; }
+          
+          document.getElementById('formRowNumber').value = rowData.rowNumber;
+          document.getElementById('formNo').value = rowData.no;
+          document.getElementById('formNomorSurat').value = rowData.nomorSurat;
+          document.getElementById('formTglSurat').value = convertToInputDate(rowData.tglSurat);
+          document.getElementById('formAsalSurat').value = rowData.asalSurat;
+          document.getElementById('formTglPenerimaan').value = convertToInputDate(rowData.tglPenerimaan);
+          document.getElementById('formUraian').value = rowData.uraian;
+          document.getElementById('formTglPenyampaian').value = convertToInputDate(rowData.tglPenyampaian);
+          document.getElementById('formUnitBidang').value = rowData.unitBidang || '';
+          document.getElementById('formDisposisi').value = rowData.disposisi || '';
+          document.getElementById('formKeterangan').value = rowData.keterangan || '';
+          document.getElementById('formNoAgenda').value = rowData.noAgenda || ''; // PERBAIKAN
+          
+          if (rowData.dokumentasi && rowData.dokumentasi !== '-') {
+            existingFileUrl = rowData.dokumentasi;
+            document.getElementById('existingFileLink').href = rowData.dokumentasi;
+            document.getElementById('existingFileName').textContent = 'Lihat File Dokumentasi';
+            document.getElementById('existingFile').style.display = 'block';
+          }
+        } else {
+          title.textContent = 'Tambah Data Surat Baru';
+          const maxNo = allData.length > 0 ? Math.max(...allData.map(d => Number(d.no) || 0)) : 0;
+          document.getElementById('formNo').value = maxNo + 1;
+        }
+        modal.classList.add('active');
+      }
+      
+      function closeModal() {
+        document.getElementById('crudModal').classList.remove('active');
+        selectedFile = null;
+        existingFileUrl = '';
+        clearFile();
+        document.getElementById('existingFile').style.display = 'none';
+      }
+      
+      function convertToInputDate(dateStr) {
+        if (!dateStr || dateStr === '-') return '';
+        const months = { 'Januari': '01', 'Februari': '02', 'Maret': '03', 'April': '04', 'Mei': '05', 'Juni': '06', 'Juli': '07', 'Agustus': '08', 'September': '09', 'Oktober': '10', 'November': '11', 'Desember': '12', 'januari': '01', 'februari': '02', 'maret': '03', 'april': '04', 'mei': '05', 'juni': '06', 'juli': '07', 'agustus': '08', 'september': '09', 'oktober': '10', 'november': '11', 'desember': '12' };
+        const parts = dateStr.toString().trim().split(' ');
+        if (parts.length === 3) return `${parts[2]}-${months[parts[1]]}-${parts[0].padStart(2, '0')}`;
+        return '';
+      }
+      
+      async function handleSave(e) {
+        e.preventDefault();
+        const btn = document.getElementById('saveBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+        
+        let dokumentasiUrl = existingFileUrl;
+        
+        if (selectedFile) {
+          try {
+            showMessage('Mengupload file ke Drive, mohon tunggu...', 'info');
+            const base64Data = await readFileAsBase64(selectedFile);
+            const uploadResult = await callAPI('uploadFile', {
+              base64: base64Data,
+              filename: selectedFile.name,
+              mimetype: selectedFile.type
+            });
+            
+            if (uploadResult.success) {
+              dokumentasiUrl = uploadResult.fileUrl;
+              showMessage('File berhasil diupload!', 'success');
+            } else {
+              throw new Error(uploadResult.error || 'Gagal upload ke Drive');
+            }
+          } catch (error) {
+            showMessage('Gagal upload file: ' + error.message, 'error');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-save"></i> Simpan Data';
+            return;
+          }
+        }
+        
+        // PERBAIKAN: Menambahkan noAgenda ke formData
+        const formData = {
+          rowNumber: document.getElementById('formRowNumber').value,
+          no: document.getElementById('formNo').value,
+          nomorSurat: document.getElementById('formNomorSurat').value,
+          tglSurat: document.getElementById('formTglSurat').value,
+          asalSurat: document.getElementById('formAsalSurat').value,
+          tglPenerimaan: document.getElementById('formTglPenerimaan').value,
+          uraian: document.getElementById('formUraian').value,
+          tglPenyampaian: document.getElementById('formTglPenyampaian').value,
+          unitBidang: document.getElementById('formUnitBidang').value,
+          disposisi: document.getElementById('formDisposisi').value,
+          keterangan: document.getElementById('formKeterangan').value,
+          noAgenda: document.getElementById('formNoAgenda').value,
+          dokumentasi: dokumentasiUrl
+        };
+        
+        const mode = document.getElementById('formMode').value;
+        const actionFunc = mode === 'add' ? 'addSurat' : 'updateSurat';
+        
+        try {
+          const response = await callAPI(actionFunc, { formObj: formData });
+          closeModal();
+          showMessage(response.message, 'success');
+          loadData();
+        } catch (error) {
+          showMessage('Gagal: ' + error.message, 'error');
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-save"></i> Simpan Data';
+        }
+      }
+      
+      function handleDelete(rowNumber, noSurat) {
+        if (confirm(`Apakah Anda yakin ingin menghapus data surat No. ${noSurat}? Tindakan ini tidak dapat dibatalkan.`)) {
+          callAPI('deleteSurat', { rowNumber: rowNumber })
+            .then(response => {
+              showMessage(response.message, 'success');
+              loadData();
+            })
+            .catch(error => {
+              showMessage('Gagal menghapus: ' + error.message, 'error');
+            });
+        }
+      }
+      
+      function showMessage(msg, type) {
+        const el = document.getElementById('globalMessage');
+        el.textContent = msg;
+        el.className = type === 'success' ? 'success-message active' : type === 'info' ? 'info-message active' : 'error-message active';
+        setTimeout(() => { el.classList.remove('active'); }, 4000);
+      }
+      
+      function showInfoMessage(msg) {
+        const el = document.getElementById('infoMessage');
+        el.textContent = msg;
+        el.className = 'info-message active';
+        setTimeout(() => { el.classList.remove('active'); }, 6000);
+      }
+      
+      function showError(message) {
+        showMessage(message, 'error');
+        document.getElementById('loading').classList.remove('active');
+      }
+      
+      function renderTable() {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
+        if (filteredData.length === 0) {
+          document.getElementById('tableContainer').style.display = 'none';
+          document.getElementById('noData').style.display = 'block';
+          document.getElementById('pagination').style.display = 'none';
+          document.getElementById('paginationInfo').style.display = 'none';
+          return;
+        }
+        document.getElementById('noData').style.display = 'none';
+        document.getElementById('tableContainer').style.display = 'block';
+        const startIndex = (currentPage - 1) * pageSize;
+        const endIndex = Math.min(startIndex + pageSize, filteredData.length);
+        const pageData = filteredData.slice(startIndex, endIndex);
+        const fragment = document.createDocumentFragment();
+        
+        pageData.forEach((row, index) => {
+          const tr = document.createElement('tr');
+          const hasUnit = row.unitBidang && row.unitBidang.trim() !== '';
+          if (!hasUnit) tr.classList.add('belum-ditujukan');
+          const unitBadge = hasUnit ? `<span class="badge">${escapeHtml(row.unitBidang)}</span>` : `<span class="badge badge-belum"><i class="fas fa-exclamation-circle"></i> Belum Ditujukan</span>`;
+          const keteranganText = row.keterangan ? escapeHtml(row.keterangan) : '-';
+          const tglPenyampaianText = row.tglPenyampaian && row.tglPenyampaian !== '-' ? escapeHtml(row.tglPenyampaian) : '-';
+          const tglSuratText = row.tglSurat && row.tglSurat !== '-' ? escapeHtml(row.tglSurat) : '-';
+          
+          let dokumentasiHtml = '-';
+          if (row.dokumentasi && row.dokumentasi !== '-') {
+            dokumentasiHtml = `<a href="${escapeHtml(row.dokumentasi)}" target="_blank" class="dokumentasi-link"><i class="fas fa-file-alt"></i> Lihat</a>`;
+          }
+          
+          const actionButtons = isLoggedIn ? `
+            <td style="text-align: center; white-space: nowrap;">
+              <button class="btn btn-warning btn-sm" onclick="openModal('edit', ${row.rowNumber})" title="Edit"><i class="fas fa-edit"></i></button>
+              <button class="btn btn-danger btn-sm" onclick="handleDelete(${row.rowNumber}, '${escapeHtml(row.no)}')" title="Hapus"><i class="fas fa-trash"></i></button>
+            </td>
+          ` : '<td>-</td>';
+          
+          // PERBAIKAN: Menambahkan kolom No Agenda di render tabel
+          tr.innerHTML = `
+            <td>${escapeHtml(row.no) || (startIndex + index + 1)}</td>
+            <td><strong>${escapeHtml(row.nomorSurat)}</strong></td>
+            <td>${tglSuratText}</td>
+            <td>${escapeHtml(row.asalSurat)}</td>
+            <td>${escapeHtml(row.tglPenerimaan)}</td>
+            <td>${escapeHtml(row.uraian)}</td>
+            <td>${tglPenyampaianText}</td>
+            <td>${unitBadge}</td>
+            <td>${escapeHtml(row.disposisi) || '-'}</td>
+            <td class="keterangan-cell" title="${keteranganText}">${keteranganText}</td>
+            <td>${escapeHtml(row.noAgenda) || '-'}</td>
+            <td class="dokumentasi-cell">${dokumentasiHtml}</td>
+            ${actionButtons}
+          `;
+          fragment.appendChild(tr);
+        });
+        tbody.appendChild(fragment);
+        document.getElementById('paginationInfo').textContent = `Menampilkan ${startIndex + 1} - ${endIndex} dari ${filteredData.length} data`;
+        document.getElementById('paginationInfo').style.display = 'block';
+      }
+      
+      function renderPagination() {
+        const paginationDiv = document.getElementById('pagination');
+        paginationDiv.innerHTML = '';
+        const totalPages = Math.ceil(filteredData.length / pageSize);
+        if (totalPages <= 1) { paginationDiv.style.display = 'none'; return; }
+        paginationDiv.style.display = 'flex';
+        const prevBtn = document.createElement('button');
+        prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.onclick = function() { goToPage(currentPage - 1); };
+        paginationDiv.appendChild(prevBtn);
+        const maxButtons = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+        let endPage = Math.min(totalPages, startPage + maxButtons - 1);
+        if (endPage - startPage < maxButtons - 1) startPage = Math.max(1, endPage - maxButtons + 1);
+        if (startPage > 1) {
+          const firstBtn = document.createElement('button');
+          firstBtn.textContent = '1';
+          firstBtn.onclick = function() { goToPage(1); };
+          paginationDiv.appendChild(firstBtn);
+          if (startPage > 2) {
+            const dots = document.createElement('span');
+            dots.textContent = '...';
+            dots.style.padding = '0 0.5rem';
+            paginationDiv.appendChild(dots);
+          }
+        }
+        for (let i = startPage; i <= endPage; i++) {
+          const btn = document.createElement('button');
+          btn.textContent = i;
+          if (i === currentPage) btn.classList.add('active');
+          btn.onclick = function() { goToPage(i); };
+          paginationDiv.appendChild(btn);
+        }
+        if (endPage < totalPages) {
+          if (endPage < totalPages - 1) {
+            const dots = document.createElement('span');
+            dots.textContent = '...';
+            dots.style.padding = '0 0.5rem';
+            paginationDiv.appendChild(dots);
+          }
+          const lastBtn = document.createElement('button');
+          lastBtn.textContent = totalPages;
+          lastBtn.onclick = function() { goToPage(totalPages); };
+          paginationDiv.appendChild(lastBtn);
+        }
+        const nextBtn = document.createElement('button');
+        nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.onclick = function() { goToPage(currentPage + 1); };
+        paginationDiv.appendChild(nextBtn);
+      }
+      
+      function goToPage(page) {
+        currentPage = page;
+        renderTable();
+        renderPagination();
+        document.getElementById('tableContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      
+      function handleSearch() {
+        const query = document.getElementById('searchInput').value.toLowerCase().trim();
+        const unitFilter = document.getElementById('unitFilter').value.trim();
+        filteredData = allData.filter(row => {
+          const matchSearch = !query || (row.nomorSurat && row.nomorSurat.toLowerCase().includes(query)) || (row.asalSurat && row.asalSurat.toLowerCase().includes(query)) || (row.uraian && row.uraian.toLowerCase().includes(query)) || (row.no && String(row.no).toLowerCase().includes(query));
+          let matchUnit = true;
+          if (unitFilter === '__BELUM_DITUJUKAN__') {
+            matchUnit = !row.unitBidang || row.unitBidang.trim() === '';
+          } else if (unitFilter) {
+            const rowUnit = row.unitBidang ? row.unitBidang.trim().toLowerCase() : '';
+            matchUnit = rowUnit === unitFilter.toLowerCase();
+          }
+          return matchSearch && matchUnit;
+        });
+        const filterSelect = document.getElementById('unitFilter');
+        if (unitFilter === '__BELUM_DITUJUKAN__') filterSelect.classList.add('active-filter');
+        else filterSelect.classList.remove('active-filter');
+        currentPage = 1;
+        renderTable();
+        renderPagination();
+      }
+      function handleFilter() { handleSearch(); }
+      function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+      function animateValue(id, start, end, duration) {
+        const obj = document.getElementById(id);
+        let startTimestamp = null;
+        const step = (timestamp) => {
+          if (!startTimestamp) startTimestamp = timestamp;
+          const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+          obj.innerHTML = Math.floor(progress * (end - start) + start);
+          if (progress < 1) window.requestAnimationFrame(step);
+        };
+        window.requestAnimationFrame(step);
+      }
+      window.onclick = function(event) {
+        const modal = document.getElementById('crudModal');
+        if (event.target == modal) closeModal();
+      }
+    </script>
+  </body>
+</html>
