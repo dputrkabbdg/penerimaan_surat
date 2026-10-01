@@ -149,7 +149,7 @@
           <div class="stat-card"><div class="stat-header"><div><div class="stat-value" id="totalSurat">0</div><div class="stat-label">Total Surat Masuk</div></div><div class="stat-icon"><i class="fas fa-inbox"></i></div></div></div>
           <div class="stat-card"><div class="stat-header"><div><div class="stat-value" id="suratBulanIni">0</div><div class="stat-label">Surat Bulan Ini</div></div><div class="stat-icon"><i class="fas fa-calendar-check"></i></div></div></div>
           <div class="stat-card"><div class="stat-header"><div><div class="stat-value" id="suratHariIni">0</div><div class="stat-label">Surat Hari Ini</div></div><div class="stat-icon"><i class="fas fa-clock"></i></div></div></div>
-          <div class="stat-card"><div class="stat-header"><div><div class="stat-value" id="totalUnit">0</div><div class="stat-label">Unit/Bidang Penerima</div></div><div class="stat-icon"><i class="fas fa-sitemap"></i></div></div></div>
+          <div class="stat-card"><div class="stat-header"><div><div class="stat-value" id="totalTindakLanjut">0</div><div class="stat-label">Surat Ditindaklanjuti</div></div><div class="stat-icon"><i class="fas fa-clipboard-check"></i></div></div></div>
           <div class="stat-card belum-ditujukan"><div class="stat-header"><div><div class="stat-value" id="belumDitujukan">0</div><div class="stat-label">Surat Belum Ditujukan</div></div><div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div></div></div>
         </div>
         
@@ -452,7 +452,7 @@
           animateValue("totalSurat", 0, result.stats.totalSurat, 500);
           animateValue("suratBulanIni", 0, result.stats.suratBulanIni, 500);
           animateValue("suratHariIni", 0, result.stats.suratHariIni, 500);
-          document.getElementById('totalUnit').textContent = Object.keys(result.stats.unitBidangCount).length;
+          animateValue("totalTindakLanjut", 0, result.stats.tindakLanjutCount || 0, 500);
           animateValue("belumDitujukan", 0, result.stats.belumDitujukan || 0, 500);
           if (result.stats.belumDitujukan > 0) showInfoMessage(`⚠️ Ada ${result.stats.belumDitujukan} surat yang belum ditugaskan ke Unit/Bidang`);
         }
