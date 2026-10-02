@@ -533,11 +533,8 @@
             <option value="">Semua Unit/Bidang</option>
           </select>
           <button class="btn-add" onclick="handleSearch()" style="background:#6c757d;">
-  <i class="fas fa-search"></i> Cari
-</button>
-<button id="btnReset" class="btn-add" style="display:none; background:#dc3545;" onclick="resetSearch()">
-  <i class="fas fa-undo"></i> Tampilkan Semua
-</button>
+            <i class="fas fa-search"></i> Cari
+          </button>
         </div>
       </div>
 
@@ -749,9 +746,7 @@
         populateFilters(res.data.uniqueUnits);
         renderTable(currentDataArray);
         if (totalAvailableData > 100) {
-        document.getElementById('btnLoadMore').style.display = 'inline-block';
-    }
-        document.getElementById('btnReset').style.display = 'none'; // <-- TAMBAHKAN BARIS INI
+          document.getElementById('btnLoadMore').style.display = 'inline-block';
         }
       }
     }
@@ -823,25 +818,8 @@
         currentDataArray = res.data.suratData;
         renderTable(currentDataArray);
         document.getElementById('btnLoadMore').style.display = 'none';
-        document.getElementById('btnLoadMore').style.display = 'none';
-        document.getElementById('btnReset').style.display = 'inline-flex'; 
       }
     }
-    async function loadMoreData() {
-  const res = await apiCall('getDashboardData', { limit: totalAvailableData });
-  if (res.success) {
-    currentDataArray = res.data.suratData;
-    renderTable(currentDataArray);
-    document.getElementById('btnLoadMore').style.display = 'none';
-  }
-}
-
-// FUNGSI BARU: Reset pencarian dan tampilkan data semula
-async function resetSearch() {
-  document.getElementById('searchInput').value = '';
-  document.getElementById('unitFilter').value = '';
-  await loadDashboard();
-}
 
     async function handleSearch() {
       const query = document.getElementById('searchInput').value.trim();
